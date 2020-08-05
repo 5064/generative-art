@@ -1,10 +1,10 @@
-const CANVAS_SIDE = 200;
+const CANVAS_SIDE = 600;
 const COLOR_PALETTE = [
     ["#264653", "#2A9C8F", "#E9C46A", "#F4A261", "#E76F51"], // vivid
     ["#D8E2DC", "#FFE5D9", "#FFCAD4", "#F4ACB7", "#9D8189"], // pastel
     ["#494848", "#636363", "#909090", "#B4B4B4", "#FFFFFF"], // gray gradient
 ],
-    PALETTE_NUM = 0;
+    PALETTE_NUM = 1;
 
 chooseColor = (index) => {
     switch (index) {
@@ -27,17 +27,17 @@ drawCircle = (x, y, r, seed) => {
     translate(x, y)
     circle(0, 0, r)
     fill(0);
-    rotate((TWO_PI / 3) * seed)
+    rotate((PI * 2 / 3) * seed)
     arc(0, 0, r, r, 0, PI / 3);
     pop()
 }
 
 drawCircles = () => {
     const r = CANVAS_SIDE / 10
-    for (let y = 0; y < CANVAS_SIDE; y++) {
+    for (let y = 0; y < 9; y++) {
         const shift = y % 2;
-        for (let x = 0; x < CANVAS_SIDE; x++) {
-            const seed = (x + y) / 2 % 3;
+        for (let x = 0; x < 9; x++) {
+            const seed = (x + y) % 3;
             drawCircle(x * (CANVAS_SIDE / 10) + r + (shift * (CANVAS_SIDE / 10) / 2), y * (CANVAS_SIDE / 10) + r, r, seed)
         }
     }
