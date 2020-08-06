@@ -5,40 +5,42 @@ const COLOR_PALETTE = [
     ["#494848", "#636363", "#909090", "#B4B4B4", "#FFFFFF"], // gray gradient
 ],
     PALETTE_NUM = 1;
+const GRID = CANVAS_SIDE / 10;
+const r = GRID;
+let seed9t;
 
 chooseColor = (index) => {
-    switch (index) {
-        case 0:
-            return COLOR_PALETTE[PALETTE_NUM][0]
-        case 1:
-            return COLOR_PALETTE[PALETTE_NUM][1]
-        case 2:
-            return COLOR_PALETTE[PALETTE_NUM][2]
-        case 3:
-            return COLOR_PALETTE[PALETTE_NUM][3]
-        default:  // grain >= 4
-            return COLOR_PALETTE[PALETTE_NUM][4]
+    return COLOR_PALETTE[PALETTE_NUM][index]
+}
+
+seed9ByTime = () => {
+    if (frameCount % 10 === 0) {  // every 2 seconds
+        seed9t = frameCount / 10 % 9  // return seed (0-8)
     }
 }
 
-drawCircle = (x, y, r, seed) => {
+drawParticle = (x, y, r) => {
     push()
-    fill(color(chooseColor(seed)));
-    translate(x, y)
+    const yBit = y % 2;
+    const seed3x = x % 3;
+    fill(color(chooseColor(3)));
+    translate(x * GRID + yBit * (3 * GRID / 2), y * GRID * Math.sin(PI / 3));
     circle(0, 0, r)
-    fill(0);
-    rotate((PI * 2 / 3) * seed)
-    arc(0, 0, r, r, 0, PI / 3);
+    fill(color(chooseColor(0)));
+    rotate(-(PI / 3));
+    rotate(PI * yBit);
+    rotate(-(PI / 3) * seed3x);  // 
+    rotate(-(TWO_PI / 3) * seed9t);  // 時間で回転
+    arc(0, 0, r, r, 0, (PI / 3));
     pop()
 }
 
-drawCircles = () => {
-    const r = CANVAS_SIDE / 10
-    for (let y = 0; y < 9; y++) {
-        const shift = y % 2;
-        for (let x = 0; x < 9; x++) {
-            const seed = (x + y) % 3;
-            drawCircle(x * (CANVAS_SIDE / 10) + r + (shift * (CANVAS_SIDE / 10) / 2), y * (CANVAS_SIDE / 10) + r, r, seed)
+drawParticles = () => {
+    for (let y = 0; y < 12; y++) {
+
+        for (let x = 0; x < 11; x++) {
+            // drawCircle(x * (CANVAS_SIDE / 10) + (shift * (CANVAS_SIDE / 10) / 2), y * (CANVAS_SIDE / 10) * Math.sin(PI / 3), r)
+            drawParticle(x, y, r)
         }
     }
 }
@@ -48,6 +50,7 @@ setup = () => {
 }
 
 draw = () => {
-    background(200)
-    drawCircles();
+    seed9ByTime();
+    background(123);
+    drawParticles();
 }
