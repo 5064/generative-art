@@ -14,23 +14,27 @@ chooseColor = (index) => {
 }
 
 seed9ByTime = () => {
-    if (frameCount % 10 === 0) {  // every 2 seconds
-        seed9t = frameCount / 10 % 9  // return seed (0-8)
+    if (frameCount % 160 === 0) {  // every 2 seconds
+        seed9t =
+            frameCount / 160 % 9  // return seed (0-8)
     }
 }
 
 drawParticle = (x, y, r) => {
     push()
     const yBit = y % 2;
+    const ySign = yBit ? 1 : -1;
     const seed3x = x % 3;
     fill(color(chooseColor(3)));
-    translate(x * GRID + yBit * (3 * GRID / 2), y * GRID * Math.sin(PI / 3));
+    translate(x * GRID - yBit * (GRID / 2), y * GRID * Math.sin(PI / 3));
     circle(0, 0, r)
     fill(color(chooseColor(0)));
-    rotate(-(PI / 3));
-    rotate(PI * yBit);
-    rotate(-(PI / 3) * seed3x);  // 
-    rotate(-(TWO_PI / 3) * seed9t);  // 時間で回転
+    // rotate(-(PI / 3));
+    if (yBit) {
+        rotate(PI);
+    }
+    rotate(ySign * (PI / 3) * seed3x);
+    rotate(ySign * (TWO_PI / 3) * seed9t);  // 時間で回転
     arc(0, 0, r, r, 0, (PI / 3));
     pop()
 }
