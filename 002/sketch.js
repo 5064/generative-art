@@ -29,10 +29,9 @@ updateSphereY = () => {
     }
 
     if (_frameCount > 60) {
-        console.log(_frameCount / 60)
-        sphereY = map(easeInOutCubic(_frameCount / 60), 1, 2, -CANVAS_SIDE / 6, CANVAS_SIDE / 6);
+        sphereY = map(easeInOutCubic(_frameCount / 60), 0, 1, -(CANVAS_SIDE / 6), CANVAS_SIDE / 6);
     } else {
-        sphereY = map(easeInOutCubic(_frameCount / 60), 0, 1, CANVAS_SIDE / 6, -CANVAS_SIDE / 6);
+        sphereY = map(easeInOutCubic(_frameCount / 60), 0, 1, -CANVAS_SIDE / 6, (CANVAS_SIDE / 6));
     }
 }
 
