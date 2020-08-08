@@ -16,8 +16,8 @@ chooseColor = (index) => {
 }
 
 updateSeed5 = () => {
-    if (frameCount % 60 === 0) {
-        seed5 = frameCount / 60 % 5
+    if ((frameCount + 30) % 60 === 0) {
+        seed5 = (frameCount + 30) / 60 % 5
     }
 }
 
@@ -28,10 +28,10 @@ updateSphereY = () => {
         _frameCount = (_frameCount - (120 * n))
     }
 
-    if (_frameCount > 60) {
-        sphereY = map(easeInOutCubic(_frameCount / 60), 0, 1, -(CANVAS_SIDE / 6), CANVAS_SIDE / 6);
+    if (_frameCount < 60) {
+        sphereY = map(easeInOutCubic(_frameCount / 60), 0, 1, -CANVAS_SIDE / 6, (CANVAS_SIDE / 6));  // down
     } else {
-        sphereY = map(easeInOutCubic(_frameCount / 60), 0, 1, -CANVAS_SIDE / 6, (CANVAS_SIDE / 6));
+        sphereY = map(easeInOutCubic(_frameCount / 60 - 1), 0, 1, (CANVAS_SIDE / 6), -CANVAS_SIDE / 6);  // up
     }
 }
 
