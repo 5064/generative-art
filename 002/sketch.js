@@ -6,32 +6,31 @@ const COLOR_PALETTE = [
 ],
     PALETTE_NUM = 0;
 
-const CUBE_SIDE = 40;
-
-let seed5 = 0;
-let sphereY = 1;
+const CUBE_SIDE = CANVAS_SIDE / 20,
+    MAX_CUBE = 8
+let colorIndex = Array(MAX_CUBE).fill(0);  // sphere color
 
 chooseColor = (index) => {
     return COLOR_PALETTE[PALETTE_NUM][index]
 }
 
-updateSeed5 = () => {
-    if ((frameCount + 30) % 60 === 0) {
-        seed5 = (frameCount + 30) / 60 % 5
+updateColorIndex = (_frameCount, index) => {
+    if ((_frameCount + 30) % 60 === 0) {
+        colorIndex[index] = (_frameCount + 30) / 60 % 5
     }
 }
 
-updateSphereY = () => {
-    let _frameCount = frameCount
+updateSphereY = _frameCount => {
+    const toHide = CUBE_SIDE / 2
     if (_frameCount > 120) {  // map to 0-120
         const n = parseInt(_frameCount / 120);
         _frameCount = (_frameCount - (120 * n))
     }
 
     if (_frameCount < 60) {
-        sphereY = map(easeInOutCubic(_frameCount / 60), 0, 1, -CANVAS_SIDE / 6, (CANVAS_SIDE / 6));  // down
+        return map(easeInOutCubic(_frameCount / 60), 0, 1, -CUBE_SIDE * 2 + toHide, CUBE_SIDE * 2 + toHide);  // down
     } else {
-        sphereY = map(easeInOutCubic(_frameCount / 60 - 1), 0, 1, (CANVAS_SIDE / 6), -CANVAS_SIDE / 6);  // up
+        return map(easeInOutCubic(_frameCount / 60 - 1), 0, 1, CUBE_SIDE * 2 + toHide, -CUBE_SIDE * 2 + toHide);  // up
     }
 }
 
@@ -40,14 +39,14 @@ easeInOutCubic = t => {
     return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
 }
 
-drawCube = (x, y) => {
+drawCube = (x, y, _frameCount, i) => {
     push();
     translate(x, y);
     // top of cube
     line(0, -CUBE_SIDE, Math.sin(-TWO_PI / 3) * CUBE_SIDE, Math.cos(-TWO_PI / 3) * CUBE_SIDE,);
     line(0, -CUBE_SIDE, Math.sin(PI - (PI / 3)) * CUBE_SIDE, Math.cos(PI - (PI / 3)) * CUBE_SIDE,);
 
-    drawSphere()
+    drawSphere(_frameCount, i)
     // side surface
     fill(255)
     quad(
@@ -65,11 +64,12 @@ drawCube = (x, y) => {
     pop()
 }
 
-drawSphere = () => {
+drawSphere = (_frameCount, i) => {
     push()
     noStroke()
-    fill(color(chooseColor(seed5)))
-    circle(0, sphereY, CUBE_SIDE * 0.8);
+    updateColorIndex(_frameCount, i)
+    fill(color(chooseColor(colorIndex[i])))
+    circle(0, updateSphereY(_frameCount), CUBE_SIDE * 0.8);
     pop()
 }
 
@@ -79,7 +79,8 @@ setup = () => {
 
 draw = () => {
     background(255);
-    updateSeed5();
-    updateSphereY();
-    drawCube(CANVAS_SIDE / 2, CANVAS_SIDE / 2);
+    for (i = 0; i < MAX_CUBE; i++) {
+        const _frameCount = frameCount + i * 10
+        drawCube(CANVAS_SIDE / (MAX_CUBE + 1) * (i + 1), CANVAS_SIDE / 2, _frameCount, i);
+    }
 }
