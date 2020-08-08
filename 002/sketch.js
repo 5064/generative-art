@@ -8,7 +8,8 @@ const COLOR_PALETTE = [
 
 const CUBE_SIDE = CANVAS_SIDE / 20,
     MAX_CUBE = 8
-let colorIndex = Array(MAX_CUBE).fill(0);  // sphere color
+let colorIndex = [0, 0, 0, 1, 1, 1, 1, 1]  // sphere color 
+const DELAY = 10
 
 chooseColor = (index) => {
     return COLOR_PALETTE[PALETTE_NUM][index]
@@ -26,11 +27,12 @@ updateSphereY = _frameCount => {
         const n = parseInt(_frameCount / 120);
         _frameCount = (_frameCount - (120 * n))
     }
+    const amplitude = CUBE_SIDE * 1.5 + toHide;
 
     if (_frameCount < 60) {
-        return map(easeInOutCubic(_frameCount / 60), 0, 1, -CUBE_SIDE * 2 + toHide, CUBE_SIDE * 2 + toHide);  // down
+        return map(easeInOutCubic(_frameCount / 60), 0, 1, -amplitude, amplitude);  // down
     } else {
-        return map(easeInOutCubic(_frameCount / 60 - 1), 0, 1, CUBE_SIDE * 2 + toHide, -CUBE_SIDE * 2 + toHide);  // up
+        return map(easeInOutCubic(_frameCount / 60 - 1), 0, 1, amplitude, -amplitude);  // up
     }
 }
 
@@ -80,7 +82,7 @@ setup = () => {
 draw = () => {
     background(255);
     for (i = 0; i < MAX_CUBE; i++) {
-        const _frameCount = frameCount + i * 10
+        const _frameCount = frameCount + i * DELAY
         drawCube(CANVAS_SIDE / (MAX_CUBE + 1) * (i + 1), CANVAS_SIDE / 2, _frameCount, i);
     }
 }
