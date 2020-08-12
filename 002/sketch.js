@@ -22,17 +22,17 @@ updateColorIndex = (_frameCount, index) => {
 }
 
 updateSphereY = _frameCount => {
-    const toHide = CUBE_SIDE / 2
     if (_frameCount > 120) {  // map to 0-120
         const n = parseInt(_frameCount / 120);
         _frameCount = (_frameCount - (120 * n))
     }
-    const amplitude = CUBE_SIDE * 1.5 + toHide;
+    const toHide = CUBE_SIDE / 2
+    const amplitude = CUBE_SIDE * 3;
 
     if (_frameCount < 60) {
-        return map(easeInOutCubic(_frameCount / 60), 0, 1, -amplitude, amplitude);  // down
+        return map(easeInOutCubic(_frameCount / 60), 0, 1, -amplitude + toHide, amplitude + toHide);  // down
     } else {
-        return map(easeInOutCubic(_frameCount / 60 - 1), 0, 1, amplitude, -amplitude);  // up
+        return map(easeInOutCubic(_frameCount / 60 - 1), 0, 1, amplitude + toHide, -amplitude + toHide);  // up
     }
 }
 
@@ -44,9 +44,14 @@ easeInOutCubic = t => {
 drawCube = (x, y, _frameCount, i) => {
     push();
     translate(x, y);
+    stroke(127);
     // top of cube
     line(0, -CUBE_SIDE, Math.sin(-TWO_PI / 3) * CUBE_SIDE, Math.cos(-TWO_PI / 3) * CUBE_SIDE,);
     line(0, -CUBE_SIDE, Math.sin(PI - (PI / 3)) * CUBE_SIDE, Math.cos(PI - (PI / 3)) * CUBE_SIDE,);
+    push()
+    stroke(191)
+    line(0, 0, 0, -CUBE_SIDE);
+    pop()
 
     drawSphere(_frameCount, i)
     // side surface

@@ -1,13 +1,13 @@
 const CANVAS_SIDE = 600;
 const COLOR_PALETTE = [
-    ["#264653", "#2A9C8F", "#E9C46A", "#F4A261", "#E76F51"], // vivid
-    ["#d4fffa", "#FFE5D9", "#FFCAD4", "#F4ACB7", "#9D8189"], // pastel
+    ["#2A9C8F", "#E9C46A", "#E76F51"], // vivid
+    ["#d4fffa", "#FFCAD4", "#fffc9e"], // pastel
 ],
     PALETTE_NUM = 1;
 
-const CUBE_SIDE = CANVAS_SIDE / 30
-let colorIndex = [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]  // initial sphere color 
-const DELAY = 10
+const CUBE_SIDE = CANVAS_SIDE / 24
+let colorIndex = [1, 1, 1, 1]  // initial sphere color 
+const DELAY = 12
 
 chooseColor = (index) => {
     return COLOR_PALETTE[PALETTE_NUM][index]
@@ -15,22 +15,22 @@ chooseColor = (index) => {
 
 updateColorIndex = (_frameCount, index) => {
     if ((_frameCount + 30) % 60 === 0) {
-        colorIndex[index] = (_frameCount + 30) / 60 % 5
+        colorIndex[index] = (_frameCount + 30) / 60 % 3
     }
 }
 
 updateSphereY = _frameCount => {
-    const toHide = CUBE_SIDE / 2
     if (_frameCount > 120) {  // map to 0-120
         const n = parseInt(_frameCount / 120);
         _frameCount = (_frameCount - (120 * n))
     }
-    const amplitude = CUBE_SIDE * 1.5 + toHide;
+    const toHide = CUBE_SIDE / 2
+    const amplitude = CUBE_SIDE * 6;
 
     if (_frameCount < 60) {
-        return map(easeInOutCubic(_frameCount / 60), 0, 1, -amplitude, amplitude);  // down
+        return map(easeInOutCubic(_frameCount / 60), 0, 1, -amplitude + toHide, amplitude + toHide);  // down
     } else {
-        return map(easeInOutCubic(_frameCount / 60 - 1), 0, 1, amplitude, -amplitude);  // up
+        return map(easeInOutCubic(_frameCount / 60 - 1), 0, 1, amplitude + toHide, -amplitude + toHide);  // up
     }
 }
 
@@ -42,6 +42,7 @@ easeInOutCubic = t => {
 drawCube = (x, y, _frameCount, i) => {
     push();
     translate(x, y);
+    stroke(127);
     // top of cube
     fill(255)
     quad(
@@ -50,6 +51,10 @@ drawCube = (x, y, _frameCount, i) => {
         0, -CUBE_SIDE,
         Math.cos(PI - PI / 6) * CUBE_SIDE, (Math.sin(PI - PI / 6) * CUBE_SIDE - CUBE_SIDE),
     );
+    push();
+    stroke(191);
+    line(0, 0, 0, -CUBE_SIDE);
+    pop();
 
     drawSphere(_frameCount, i)
     // side surface
@@ -77,18 +82,47 @@ drawSphere = (_frameCount, i) => {
     pop()
 }
 // line up dire shape
-drawLineUpCubes = (layerNum) => {
-    const py = CANVAS_SIDE * 0.2; // padding Y
+drawLineUpCubes = () => {
+    const py = CANVAS_SIDE * 0.25; // padding Y
     const contentArea = CANVAS_SIDE - (py * 2);
 
-    const rowNum = layerNum * 2 - 1;
-    for (i = 0; i < rowNum; i++) {
-        const rowCubes = i * 2 + 1;
-        for (j = 0; j < rowCubes; j++) {
-            const _frameCount = frameCount + i * DELAY
-            drawCube((CANVAS_SIDE / rowNum) * (j + 1), (contentArea / (rowNum - 1)) * i + py, _frameCount, i);
-        }
-    }
+    const ROW_NUM = 7;
+    // horrible hard coding...
+    drawCube((CANVAS_SIDE / 8) * 4, (contentArea / (ROW_NUM + 1)) + py, animationDelay(3), 3);
+
+    drawCube((CANVAS_SIDE / 8) * 3, (contentArea / (ROW_NUM + 1)) * 2 + py, animationDelay(3), 3);
+    drawCube((CANVAS_SIDE / 8) * 4, (contentArea / (ROW_NUM + 1)) * 2 + py, animationDelay(2), 2);
+    drawCube((CANVAS_SIDE / 8) * 5, (contentArea / (ROW_NUM + 1)) * 2 + py, animationDelay(3), 3);
+
+    drawCube((CANVAS_SIDE / 8) * 2, (contentArea / (ROW_NUM + 1)) * 3 + py, animationDelay(3), 3);
+    drawCube((CANVAS_SIDE / 8) * 3, (contentArea / (ROW_NUM + 1)) * 3 + py, animationDelay(2), 2);
+    drawCube((CANVAS_SIDE / 8) * 4, (contentArea / (ROW_NUM + 1)) * 3 + py, animationDelay(1), 1);
+    drawCube((CANVAS_SIDE / 8) * 5, (contentArea / (ROW_NUM + 1)) * 3 + py, animationDelay(2), 2);
+    drawCube((CANVAS_SIDE / 8) * 6, (contentArea / (ROW_NUM + 1)) * 3 + py, animationDelay(3), 3);
+
+    drawCube((CANVAS_SIDE / 8) * 1, (contentArea / (ROW_NUM + 1)) * 4 + py, animationDelay(3), 3);
+    drawCube((CANVAS_SIDE / 8) * 2, (contentArea / (ROW_NUM + 1)) * 4 + py, animationDelay(2), 2);
+    drawCube((CANVAS_SIDE / 8) * 3, (contentArea / (ROW_NUM + 1)) * 4 + py, animationDelay(1), 1);
+    drawCube((CANVAS_SIDE / 8) * 4, (contentArea / (ROW_NUM + 1)) * 4 + py, animationDelay(0), 0);
+    drawCube((CANVAS_SIDE / 8) * 5, (contentArea / (ROW_NUM + 1)) * 4 + py, animationDelay(1), 1);
+    drawCube((CANVAS_SIDE / 8) * 6, (contentArea / (ROW_NUM + 1)) * 4 + py, animationDelay(2), 2);
+    drawCube((CANVAS_SIDE / 8) * 7, (contentArea / (ROW_NUM + 1)) * 4 + py, animationDelay(3), 3);
+
+    drawCube((CANVAS_SIDE / 8) * 2, (contentArea / (ROW_NUM + 1)) * 5 + py, animationDelay(3), 3);
+    drawCube((CANVAS_SIDE / 8) * 3, (contentArea / (ROW_NUM + 1)) * 5 + py, animationDelay(2), 2);
+    drawCube((CANVAS_SIDE / 8) * 4, (contentArea / (ROW_NUM + 1)) * 5 + py, animationDelay(1), 1);
+    drawCube((CANVAS_SIDE / 8) * 5, (contentArea / (ROW_NUM + 1)) * 5 + py, animationDelay(2), 2);
+    drawCube((CANVAS_SIDE / 8) * 6, (contentArea / (ROW_NUM + 1)) * 5 + py, animationDelay(3), 3);
+
+    drawCube((CANVAS_SIDE / 8) * 3, (contentArea / (ROW_NUM + 1)) * 6 + py, animationDelay(3), 3);
+    drawCube((CANVAS_SIDE / 8) * 4, (contentArea / (ROW_NUM + 1)) * 6 + py, animationDelay(2), 2);
+    drawCube((CANVAS_SIDE / 8) * 5, (contentArea / (ROW_NUM + 1)) * 6 + py, animationDelay(3), 3);
+
+    drawCube((CANVAS_SIDE / 8) * 4, (contentArea / (ROW_NUM + 1)) * 7 + py, animationDelay(3), 3);
+}
+
+animationDelay = (order) => {
+    return frameCount + (order * DELAY)
 }
 
 setup = () => {
@@ -96,6 +130,6 @@ setup = () => {
 }
 
 draw = () => {
-    background(64);
+    background(255);
     drawLineUpCubes(3)
 }
