@@ -1,60 +1,77 @@
-const CANVAS_SIDE = 600;
-const COLOR_PALETTE = [
-    ["#264653", "#2A9C8F", "#E9C46A", "#F4A261", "#E76F51"], // vivid
-    ["#D8E2DC", "#FFE5D9", "#FFCAD4", "#F4ACB7", "#9D8189"], // pastel
-    ["#494848", "#636363", "#909090", "#B4B4B4", "#FFFFFF"], // gray gradient
-],
-    PALETTE_NUM = 1;
-const GRID = CANVAS_SIDE / 10;
-const r = GRID;
-let seed9t;
+const CANVAS_X = 600,
+    CANVAS_Y = 600;
+const r = 30;
+const velocity = (Math.PI / 6) * 5;
 
-chooseColor = (index) => {
-    return COLOR_PALETTE[PALETTE_NUM][index]
-}
+const starConfig = [
+    { x: 400, y: 300, size: 25 },
+    { x: 200, y: 100, size: 10 },
+    { x: 75, y: 150, size: 20 },
+    { x: 50, y: 450, size: 20 },
+    { x: 550, y: 350, size: 15 },
+    { x: 500, y: 50, size: 25 },
+];
+const cometConfig = [
+    { x: 400, y: 300, size: 25 },
+    { x: 200, y: 100, size: 10 },
+    { x: 75, y: 150, size: 20 },
+    { x: 50, y: 450, size: 20 },
+    { x: 550, y: 350, size: 15 },
+    { x: 500, y: 50, size: 25 },
+]
 
-seed9ByTime = () => {
-    if (frameCount % 160 === 0) {  // every 2 seconds
-        seed9t =
-            frameCount / 160 % 9  // return seed (0-8)
-    }
-}
+drawComet = (x, y) => {
+    // drawTail(x, y);
+    // drawCore(x, y);
+};
 
-drawParticle = (x, y, r) => {
+drawCore = (x, y) => {
     push()
-    const yBit = y % 2;
-    const ySign = yBit ? 1 : -1;
-    const seed3x = x % 3;
-    fill(color(chooseColor(3)));
-    translate(x * GRID - yBit * (GRID / 2), y * GRID * Math.sin(PI / 3));
-    circle(0, 0, r)
-    fill(color(chooseColor(0)));
-    // rotate(-(PI / 3));
-    if (yBit) {
-        rotate(PI);
+    translate(x, y);
+    fill(255);
+    circle(x, y, r)
+    pop();
+}
+
+drawTail = () => {
+    push()
+    translate(x, 0);
+    fill(255);
+    circle(x, 0, r)
+    pop();
+}
+
+drawStar = (x, y, size) => {
+    push();
+    translate(x, y);
+    fill(color(255, random(0.5, 1) * 255))
+    textAlign(CENTER, CENTER);
+    textSize(size)
+    text("×", 0, 0);
+    pop();
+}
+
+drawStars = () => {
+    for (let c of starConfig) {
+        drawStar(c.x, c.y, c.size);
     }
-    rotate(ySign * (PI / 3) * seed3x);
-    rotate(ySign * (TWO_PI / 3) * seed9t);  // 時間で回転
-    arc(0, 0, r, r, 0, (PI / 3));
+}
+
+drawHorizon = () => {
+    push()
+    fill('#2b2d42');
+    noStroke();
+    circle(CANVAS_X / 2, CANVAS_Y * 3.1, CANVAS_Y * 5);
     pop()
 }
 
-drawParticles = () => {
-    for (let y = 0; y < 12; y++) {
-
-        for (let x = 0; x < 11; x++) {
-            // drawCircle(x * (CANVAS_SIDE / 10) + (shift * (CANVAS_SIDE / 10) / 2), y * (CANVAS_SIDE / 10) * Math.sin(PI / 3), r)
-            drawParticle(x, y, r)
-        }
-    }
-}
-
 setup = () => {
-    createCanvas(CANVAS_SIDE, CANVAS_SIDE)
+    createCanvas(CANVAS_X, CANVAS_Y)
 }
 
 draw = () => {
-    seed9ByTime();
-    background(123);
-    drawParticles();
+    background('#457b9d');
+    drawHorizon();
+    drawComet();
+    drawStars();
 }
